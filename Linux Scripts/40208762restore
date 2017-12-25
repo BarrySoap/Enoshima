@@ -1,0 +1,23 @@
+#!/bin/sh
+# Coursework Script - Restore
+
+if [ $# == 0 ]; then							# If no arguments are given,
+	echo Usage: restore yourfile1				# Show a guideline on how to use the 
+	exit										# command.
+fi
+
+for file in $*									# For each file in the arguments given,
+	do
+		path=$(<~/dustbin/paths/$file.path)					# Store the content of the path file in a variable.
+		if [ ! -f $file ]; then								# If the file no longer exists in the original directory,
+			FILE=` cat ~/dustbin/paths/$file.path`			# Place the content of the path file in a variable.
+			mkdir -p "$(dirname "$FILE")" && touch "$FILE"	# Then, recursively check each directory/file in the variable (split by -p),
+			rm ~/dustbin/$file								# and create the directories/file by the path
+			exit											# Terminate the program.
+		fi
+		
+		if [[ -f `cat ~/dustbin/paths/$file.path` ]]; then	# If a file of the same name exists within the restore location,
+			mv "$file" "$file.bak"							# Put ".bak" on the end of the restored version.
+		fi
+		mv ~/dustbin/$file $path				# Use the content of the path variable to move the
+	done										# file out of the dustbin.

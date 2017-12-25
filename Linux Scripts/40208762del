@@ -1,0 +1,30 @@
+#!/bin/sh
+# Coursework Script - Delete
+path=~/dustbin/paths
+
+if [ $# == 0 ]; then						# If no arguments are given,
+	echo Usage: del yourfile1 yourfile2		# a guideline will be shown on how to use
+	exit									# the command.
+fi
+
+if [ ! -d "dustbin" ]; then				# If the dustbin directory doesn't exist,
+	mkdir -p ~/dustbin					# create it.
+else
+	echo "Dustbin already exists, skipping creation."
+fi
+
+if [ ! -d "$path" ]; then				# If the paths folder doesn't exist,
+	mkdir -p ~/dustbin/paths			# create it.
+else
+	echo "Paths folder already exists, skipping creation."
+fi
+
+for file in $*							# For each file in the arguments given,
+	do
+		var=$(readlink -f $file)		# Put the directory of the file in a variable.
+		mv $file -t ~/dustbin			# Move the file into the dustbin, overwriting any of the same name
+		> $file.path					# Create a path file to store the original path of the file
+		echo $var >> $file.path				# Place the variable with the directory value in the path file
+		mv $file.path -t ~/dustbin/paths	# Put the path file in the path folder
+		unset var							# Clear the variable for the next input
+	done
